@@ -1,15 +1,21 @@
-import { Text, View } from "react-native";
+import { useAuth } from "@/context/AuthContext";
+import { Redirect } from "expo-router";
+import { ActivityIndicator, Text, View } from "react-native";
 
 export default function Index() {
-  return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-    </View>
-  );
+    const { isAuthenticated, loading } = useAuth();
+
+    if (loading) {
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" />
+            </View>
+        );
+    }
+
+    if (isAuthenticated) {
+        return <Redirect href="/dashboard" />;
+    } else {
+        return <Redirect href="/register" />;
+    }
 }
