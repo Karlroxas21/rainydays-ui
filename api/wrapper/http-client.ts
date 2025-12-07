@@ -1,5 +1,5 @@
-import { BASE_BE_URL } from "@/config";
-import { SecureStorageDataSource } from "../secure-storage-data-source";
+import { BASE_BE_URL } from '@/config';
+import { SecureStorageDataSource } from '../secure-storage-data-source';
 
 const secureStorage = new SecureStorageDataSource();
 
@@ -8,11 +8,7 @@ const secureStorage = new SecureStorageDataSource();
  * @param endpoint The API Path ('/profile', '/history')
  * @param options The standard RequestInit options for fetch
  */
-export async function authenticatedFetch(
-    endpoint: string,
-    options: RequestInit = {}
-): Promise<Response> {
-
+export async function authenticatedFetch(endpoint: string, options: RequestInit = {}): Promise<Response> {
     // Retrieve token from secure storage
     const jwt = await secureStorage.getToken();
 
