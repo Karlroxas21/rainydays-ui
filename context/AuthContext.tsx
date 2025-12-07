@@ -1,135 +1,134 @@
-import { SecureStorageDataSource } from "@/api/secure-storage-data-source";
-import { createContext, ReactNode, useState, useContext, useEffect } from "react";
-import { login as apiLogin } from "@/api/services/auth";
-import { router } from "expo-router";
+import { SecureStorageDataSource } from '@/api/secure-storage-data-source'
+import { createContext, ReactNode, useState, useContext, useEffect } from 'react'
+import { login as apiLogin } from '@/api/services/auth'
+import { router } from 'expo-router'
 
 interface AuthData {
-    id: string;
-    jwt: string;
-
+    id: string
+    jwt: string
 }
 
 interface User {
-    firstName: string;
-    middleName?: string;
-    lastName: string;
-    suffix?: string;
-    profileUrl?: string;
+    firstName: string
+    middleName?: string
+    lastName: string
+    suffix?: string
+    profileUrl?: string
 }
 
 interface Context {
-    isAuthenticated: boolean;
-    loading: boolean;
-    login: (identity: string, password: string) => void;
-    logout: () => void;
-    authData: AuthData | null;
-    user: User | null;
-
+    isAuthenticated: boolean
+    loading: boolean
+    login: (identity: string, password: string) => void
+    logout: () => void
+    authData: AuthData | null
+    user: User | null
 }
 
 interface Provider {
-    children: ReactNode;
+    children: ReactNode
 }
 
-const secureStorage = new SecureStorageDataSource();
+const secureStorage = new SecureStorageDataSource()
 
 const AuthContext = createContext<Context>({
     isAuthenticated: false,
     loading: true,
-    login: () => { },
-    logout: () => { },
+    login: () => {},
+    logout: () => {},
     authData: null,
-    user: null
-});
+    user: null,
+})
 
 const AuthProvider = ({ children }: Provider) => {
-    const [loading, setLoading] = useState(false);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [authData, setAuthData] = useState<AuthData | null>(null);
-    const [user, setUser] = useState<User | null>(null);
+    const [loading, setLoading] = useState(false)
+    const [isAuthenticated, setIsAuthenticated] = useState(false)
+    const [authData, setAuthData] = useState<AuthData | null>(null)
+    const [user, setUser] = useState<User | null>(null)
 
     // check if token exists
     useEffect(() => {
         // to prevent memory leaks
-        let mounted = true;
+        let mounted = true
 
         // (async() =>{}) is an Immediately Invoked Function Expression (IIFE)
-        (async () => {
-            setLoading(true);
+        ;(async () => {
+            setLoading(true)
 
             try {
-                const token = await secureStorage.getToken();
-                if (!mounted) return;
+                const token = await secureStorage.getToken()
+                if (!mounted) return
 
                 if (token) {
-                    setAuthData({ id: 'session', jwt: token as string });
-                    setIsAuthenticated(true);
+                    setAuthData({ id: 'session', jwt: token as string })
+                    setIsAuthenticated(true)
 
                     // TODO: fetch user profile
                     // const apiCallwhoAmI
                     // store setUser(apiCallWhoAmI)
                 }
-                setAuthData(null);
-                setIsAuthenticated(false);
+                setAuthData(null)
+                setIsAuthenticated(false)
             } catch (error) {
-                console.error(error);
+                console.error(error)
             } finally {
-                if (mounted) setLoading(false);
+                if (mounted) setLoading(false)
             }
-        })();
+        })()
 
-        return () => { mounted = false };
+        return () => {
+            mounted = false
+        }
     }, [])
 
-
     const login = async (identity: string, password: string) => {
-        setLoading(true);
+        setLoading(true)
         try {
-            const jwt = await apiLogin({ identifier: identity, password: password });
+            const jwt = await apiLogin({ identifier: identity, password: password })
             if (jwt) {
-                await secureStorage.saveToken(jwt as string);
-                setIsAuthenticated(true);
+                await secureStorage.saveToken(jwt as string)
+                setIsAuthenticated(true)
             } else {
-                throw new Error('Login failed: no token returned.');
+                throw new Error('Login failed: no token returned.')
             }
         } catch (error) {
-            console.error(error);
+            console.error(error)
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
-    };
+    }
 
     const logout = async () => {
-        setLoading(true);
+        setLoading(true)
         try {
-            await secureStorage.deleteToken();
-            setAuthData(null);
-            setIsAuthenticated(false);
-            setUser(null);
+            await secureStorage.deleteToken()
+            setAuthData(null)
+            setIsAuthenticated(false)
+            setUser(null)
         } catch (error) {
-            console.error(error);
+            console.error(error)
         } finally {
-            setLoading(false);
+            setLoading(false)
         }
-    };
-
+    }
 
     return (
-        <AuthContext.Provider value={{
-            isAuthenticated,
-            loading,
-            login,
-            logout,
-            authData,
-            user
-        }}>
+        <AuthContext.Provider
+            value={{
+                isAuthenticated,
+                loading,
+                login,
+                logout,
+                authData,
+                user,
+            }}>
             {children}
         </AuthContext.Provider>
     )
 }
 
 const useAuth = () => {
-    return useContext(AuthContext);
+    return useContext(AuthContext)
 }
 
-export { useAuth, AuthContext, AuthProvider };
+export { useAuth, AuthContext, AuthProvider }
