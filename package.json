@@ -10,8 +10,8 @@
         "web": "expo start --web",
         "lint": "expo lint",
         "format": "npx prettier .",
-        "lint-staged": "npm run lint . --fix",
-        "format-write": "npm run format --write",
+        "lint:fix": "npm run lint . --fix",
+        "format:write": "npm run format --write",
         "prapare": "husky"
     },
     "dependencies": {

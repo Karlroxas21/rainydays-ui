@@ -3,29 +3,29 @@ import { createContext, ReactNode, useState, useContext, useEffect } from 'react
 import { login as apiLogin } from '@/api/services/auth';
 
 interface AuthData {
-    id: string
-    jwt: string
+    id: string;
+    jwt: string;
 }
 
 interface User {
-    firstName: string
-    middleName?: string
-    lastName: string
-    suffix?: string
-    profileUrl?: string
+    firstName: string;
+    middleName?: string;
+    lastName: string;
+    suffix?: string;
+    profileUrl?: string;
 }
 
 interface Context {
-    isAuthenticated: boolean
-    loading: boolean
-    login: (identity: string, password: string) => void
-    logout: () => void
-    authData: AuthData | null
-    user: User | null
+    isAuthenticated: boolean;
+    loading: boolean;
+    login: (identity: string, password: string) => void;
+    logout: () => void;
+    authData: AuthData | null;
+    user: User | null;
 }
 
 interface Provider {
-    children: ReactNode
+    children: ReactNode;
 }
 
 const secureStorage = new SecureStorageDataSource();
@@ -33,8 +33,8 @@ const secureStorage = new SecureStorageDataSource();
 const AuthContext = createContext<Context>({
     isAuthenticated: false,
     loading: true,
-    login: () => {},
-    logout: () => {},
+    login: () => { },
+    logout: () => { },
     authData: null,
     user: null,
 });
@@ -48,10 +48,10 @@ const AuthProvider = ({ children }: Provider) => {
     // check if token exists
     useEffect(() => {
         // to prevent memory leaks
-        let mounted = true
+        let mounted = true;
 
         // (async() =>{}) is an Immediately Invoked Function Expression (IIFE)
-        ;(async () => {
+        (async () => {
             setLoading(true);
 
             try {
