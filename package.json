@@ -9,11 +9,10 @@
         "ios": "expo start --ios",
         "web": "expo start --web",
         "lint": "expo lint",
-        "format": "npx prettier . --check"
-    },
-    "lint-staged": {
-        "*.{js,jsx,ts,tsx}": "eslint --fix",
-        "*.{js,jsx,ts,tsx,json,css,md}": "prettier --write"
+        "format": "npx prettier .",
+        "lint-staged": "npm run lint --fix",
+        "format-write": "npm run format --write",
+        "prapare": "husky"
     },
     "dependencies": {
         "@expo/vector-icons": "^15.0.3",
