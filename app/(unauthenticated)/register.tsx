@@ -1,8 +1,8 @@
-import { Link } from 'expo-router'
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
+import { Link } from 'expo-router';
+import { Text, TextInput, TouchableOpacity, View } from 'react-native';
 
 export default function register() {
-    const handleSignUp = () => {}
+    const handleSignUp = () => {};
 
     return (
         <View className="flex-1 justify-center px-5 bg-base">
@@ -62,5 +62,5 @@ export default function register() {
                 </View>
             </View>
         </View>
-    )
+    );
 }
