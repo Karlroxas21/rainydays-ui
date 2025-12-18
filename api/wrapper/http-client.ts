@@ -45,7 +45,7 @@ export async function kuhain<T>(endpoint: string): Promise<T> {
     });
 
     if (!response.ok) {
-        throw new Error(`GET request failed: ${response.statusText}`);
+        throw new Error(`GET request failed: ${response.status}: ${response.statusText}`);
     }
 
     return response.json() as Promise<T>;
@@ -58,7 +58,7 @@ export async function paskil<K, Y>(endpoint: string, data: Y): Promise<K> {
     });
 
     if (!response.ok) {
-        throw new Error(`POST request faield: ${response.statusText}`);
+        throw new Error(`POST request failed: ${response.status}: ${response.statusText}`);
     }
 
     return response.json() as Promise<K>;
