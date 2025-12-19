@@ -5,9 +5,9 @@ import './globals.css';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 function RootNavigator() {
-    const { loading } = useAuth();
+    const { isInitialLoading } = useAuth();
 
-    if (loading) {
+    if (isInitialLoading) {
         return (
             <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
                 <ActivityIndicator size="large" />

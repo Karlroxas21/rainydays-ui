@@ -1,6 +1,14 @@
 import { BASE_BE_URL } from '@/config';
 import { SecureStorageDataSource } from '../secure-storage-data-source';
 
+export interface BackendError {
+    code: number;
+    message: string;
+    httpStatus: string;
+    details: any;
+    lockoutTimeSeconds: number | null;
+}
+
 const secureStorage = new SecureStorageDataSource();
 
 /**
@@ -44,11 +52,16 @@ export async function kuhain<T>(endpoint: string): Promise<T> {
         method: 'GET',
     });
 
+    const result = await response.json();
+
     if (!response.ok) {
-        throw new Error(`GET request failed: ${response.status}: ${response.statusText}`);
+        const error = new Error(result.message || 'POST request failed');
+        (error as any).status = response.status;
+        (error as any).data = result;
+        throw error;
     }
 
-    return response.json() as Promise<T>;
+    return result as Promise<T>;
 }
 
 export async function paskil<K, Y>(endpoint: string, data: Y): Promise<K> {
@@ -57,11 +70,16 @@ export async function paskil<K, Y>(endpoint: string, data: Y): Promise<K> {
         body: JSON.stringify(data),
     });
 
+    const result = await response.json();
+
     if (!response.ok) {
-        throw new Error(`POST request failed: ${response.status}: ${response.statusText}`);
+        const error = new Error(result.message || 'POST request failed');
+        (error as any).status = response.status;
+        (error as any).data = result;
+        throw error;
     }
 
-    return response.json() as Promise<K>;
+    return result as Promise<K>;
 }
 
 export async function ilagay<K, Y>(endpoint: string, data: Y): Promise<K> {
@@ -70,19 +88,28 @@ export async function ilagay<K, Y>(endpoint: string, data: Y): Promise<K> {
         body: JSON.stringify(data),
     });
 
+    const result = await response.json();
+
     if (!response.ok) {
-        throw new Error(`PUT request failed: ${response.statusText}`);
+        const error = new Error(result.message || 'POST request failed');
+        (error as any).status = response.status;
+        (error as any).data = result;
+        throw error;
     }
 
-    return response.json() as Promise<K>;
+    return result as Promise<K>;
 }
 
 export async function burahin(endpoint: string): Promise<void> {
     const response = await authenticatedFetch(endpoint, {
         method: 'DELETE',
     });
+    const result = await response.json();
 
     if (!response.ok) {
-        throw new Error(`DELETE request faield: ${response.statusText}`);
+        const error = new Error(result.message || 'POST request failed');
+        (error as any).status = response.status;
+        (error as any).data = result;
+        throw error;
     }
 }
