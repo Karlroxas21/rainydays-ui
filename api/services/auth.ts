@@ -2,14 +2,14 @@ import { BASE_BE_URL } from '@/config';
 import { paskil } from '../wrapper/http-client';
 
 // -- Register --
-interface RegisterRequest {
-    email_address: string
-    username: string
-    first_name: string
-    middle_name?: string
-    last_name: string
+export interface RegisterRequest {
+    emailAddress: string
+    username?: string
+    firstName: string
+    middleName?: string
+    lastName: string
     suffix?: string
-    profile_url?: string
+    profileUrl?: string
     password: string
 }
 
@@ -22,17 +22,17 @@ interface RegisterResponse {
 }
 
 export async function register(request: RegisterRequest): Promise<RegisterResponse> {
-    const res = await paskil<RegisterResponse, RegisterRequest>(`${BASE_BE_URL}/user/register`, request);
+    const res = await paskil<RegisterResponse, RegisterRequest>('/user/register', request);
     return res;
 }
 
 // -- Login --
-interface Credentials {
+export interface Credentials {
     identifier: string
     password: string
 }
 export async function login(credentials: Credentials): Promise<string> {
-    const jwtSession = await paskil<string, Credentials>(`${BASE_BE_URL}/user/login`, credentials);
+    const jwtSession = await paskil<string, Credentials>('/user/login', credentials);
 
     return jwtSession;
 }

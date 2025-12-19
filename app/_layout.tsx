@@ -1,7 +1,8 @@
 import { AuthProvider, useAuth } from '@/context/AuthContext';
 import { Slot } from 'expo-router';
-import { ActivityIndicator, View } from 'react-native';
+import { ActivityIndicator, StatusBar, View } from 'react-native';
 import './globals.css';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 function RootNavigator() {
     const { loading } = useAuth();
@@ -19,7 +20,10 @@ function RootNavigator() {
 export default function RootLayout() {
     return (
         <AuthProvider>
-            <RootNavigator />
+            <SafeAreaProvider>
+                <StatusBar  barStyle={'dark-content'} />
+                <RootNavigator />
+            </SafeAreaProvider>
         </AuthProvider>
     );
 }
