@@ -18,6 +18,7 @@ interface User {
 interface Context {
     isAuthenticated: boolean;
     loading: boolean;
+    isInitialLoading: boolean;
     login: (identity: string, password: string) => void;
     logout: () => void;
     authData: AuthData | null;
@@ -33,14 +34,16 @@ const secureStorage = new SecureStorageDataSource();
 const AuthContext = createContext<Context>({
     isAuthenticated: false,
     loading: true,
-    login: () => { },
-    logout: () => { },
+    isInitialLoading: true,
+    login: () => Promise.resolve(),
+    logout: () => {},
     authData: null,
     user: null,
 });
 
 const AuthProvider = ({ children }: Provider) => {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [isInitialLoading, setIsInitialLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [authData, setAuthData] = useState<AuthData | null>(null);
     const [user, setUser] = useState<User | null>(null);
@@ -52,26 +55,33 @@ const AuthProvider = ({ children }: Provider) => {
 
         // (async() =>{}) is an Immediately Invoked Function Expression (IIFE)
         (async () => {
-            setLoading(true);
-
             try {
                 const token = await secureStorage.getToken();
+
                 if (!mounted) return;
 
                 if (token) {
-                    setAuthData({ id: 'session', jwt: token as string });
+                    let rawToken: string = token;
+                    try {
+                        rawToken = JSON.parse(token);
+                    } catch {
+                        // token was already a raw string
+                    }
+                    setAuthData({ id: 'session', jwt: rawToken });
                     setIsAuthenticated(true);
 
                     // TODO: fetch user profile
                     // const apiCallwhoAmI
                     // store setUser(apiCallWhoAmI)
+                } else {
+                    setAuthData(null);
+                    setIsAuthenticated(false);
                 }
-                setAuthData(null);
-                setIsAuthenticated(false);
             } catch (error) {
                 console.error(error);
             } finally {
                 if (mounted) setLoading(false);
+                setIsInitialLoading(false);
             }
         })();
 
@@ -85,13 +95,14 @@ const AuthProvider = ({ children }: Provider) => {
         try {
             const jwt = await apiLogin({ identifier: identity, password: password });
             if (jwt) {
-                await secureStorage.saveToken(jwt as string);
+                await secureStorage.saveToken(JSON.stringify(jwt));
                 setIsAuthenticated(true);
             } else {
                 throw new Error('Login failed: no token returned.');
             }
         } catch (error) {
             console.error(error);
+            throw error;
         } finally {
             setLoading(false);
         }
@@ -116,6 +127,7 @@ const AuthProvider = ({ children }: Provider) => {
             value={{
                 isAuthenticated,
                 loading,
+                isInitialLoading,
                 login,
                 logout,
                 authData,

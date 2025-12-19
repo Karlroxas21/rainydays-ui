@@ -1,11 +1,11 @@
-import { Credentials, login } from '@/api/services/auth';
 import EyeHideIcon from '@/assets/icons/EyeHideIcon';
 import EyeShowIcon from '@/assets/icons/EyeShowIcon';
 import { Link, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Text, TouchableOpacity, View } from 'react-native';
 import { ControlledTextInput } from '../components/forms/ControlledTextInput';
+import { useAuth } from '@/context/AuthContext';
 
 interface FormValues {
     identifier: string;
@@ -16,6 +16,7 @@ export default function Login() {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [authError, setAuthError] = useState<string | null>(null);
 
+    const { login, loading } = useAuth();
     const router = useRouter();
 
     const {
@@ -41,20 +42,18 @@ export default function Login() {
 
     const handleLogin = async (data: FormValues) => {
         try {
-            const creds: Credentials = { identifier: data.identifier, password: data.password };
-            await login(creds);
+            await login(data.identifier, data.password);
 
             router.push('/(authenticated)/dashboard');
         } catch (error: any) {
+            const errorMessage = error?.message || '';
             // TODO: ADD TRY AGAIN ERROR MODAL
-            if (error.message.includes('401') || error.message.includes('403')) {
+            if (errorMessage.includes('Not Found') || errorMessage.includes('Bad credentials')) {
                 setAuthError('Invalid email or password.');
-            } else if (error.message === 'Network request failed') {
-                setAuthError('No internet connection.');
             } else {
+                console.log('HIT ELSE: ', error);
                 setAuthError('An unexpected error occurred. Please try again.');
             }
-            console.error('Error logging in: ', error);
         }
     };
     return (
@@ -108,7 +107,11 @@ export default function Login() {
                     }`}
                     disabled={!enableLoginButton}
                     onPress={handleSubmit(handleLogin)}>
-                    <Text className="text-white font-semibold text-lg">Login</Text>
+                    {loading ? (
+                        <ActivityIndicator color="white" />
+                    ) : (
+                        <Text className="text-white font-semibold text-lg">Login</Text>
+                    )}
                 </TouchableOpacity>
 
                 <Text className="text-center text-text-secondary">
