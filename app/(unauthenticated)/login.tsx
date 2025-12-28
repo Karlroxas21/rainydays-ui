@@ -47,11 +47,9 @@ export default function Login() {
             router.push('/(authenticated)/dashboard');
         } catch (error: any) {
             const errorMessage = error?.message || '';
-            // TODO: ADD TRY AGAIN ERROR MODAL
             if (errorMessage.includes('Not Found') || errorMessage.includes('Bad credentials')) {
                 setAuthError('Invalid email or password.');
             } else {
-                console.log('HIT ELSE: ', error);
                 setAuthError('An unexpected error occurred. Please try again.');
             }
         }
@@ -116,7 +114,7 @@ export default function Login() {
 
                 <Text className="text-center text-text-secondary">
                     Don&apos;t have an account?{' '}
-                    <Link href="/" className="text-text-link font-semibold">
+                    <Link href="/(unauthenticated)/register" className="text-text-link font-semibold">
                         Sign Up
                     </Link>
                 </Text>

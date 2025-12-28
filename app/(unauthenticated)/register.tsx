@@ -276,9 +276,7 @@ export default function Register() {
                                 router.push('/login');
                                 setRegisterSuccess(false);
                             }}>
-                            <Link href="/login" className="text-text-link font-semibold">
-                                Login
-                            </Link>
+                            <Text className="text-text-link font-semibold">Login</Text>
                             <ArrowRightIcon width={20} height={20} />
                         </TouchableOpacity>
                     </View>

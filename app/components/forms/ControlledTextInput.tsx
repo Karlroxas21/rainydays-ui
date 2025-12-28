@@ -58,3 +58,5 @@ export const ControlledTextInput = <T extends FieldValues>({
         </View>
     );
 };
+
+export default ControlledTextInput;
