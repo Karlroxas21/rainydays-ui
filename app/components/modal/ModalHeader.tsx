@@ -11,7 +11,7 @@ export default function ModalHeader({ className, title, onClose }: Props) {
     const { hideModal } = useModalStore();
 
     return (
-        <View className={`${className} flex flex-row items-center justify-between mb-4 border`}>
+        <View className={`${className} flex flex-row items-center justify-between mb-4`}>
             <Text className={`${className} font-bold text-lg mr-auto w-3/4`}>{title}</Text>
             <TouchableOpacity
                 onPress={() => {

@@ -1,13 +1,11 @@
-import { Control, Controller, FieldValues, Path, RegisterOptions } from 'react-hook-form';
+import { FieldValues, Path, Control, RegisterOptions, Controller } from 'react-hook-form';
 import { TouchableOpacity, View, Text } from 'react-native';
 
-interface ControlledRadioProps<T extends FieldValues> {
+interface ControlledRegularRadioButtonProps<T extends FieldValues> {
     control: Control<T>;
     name: Path<T>;
     value: string | number;
     label: string;
-    subLabel: string;
-    Icon?: React.ReactNode;
     rules?: RegisterOptions<T>;
     disabled?: boolean;
     className?: string;
@@ -40,17 +38,15 @@ const RadioIndicator = ({ selected }: { selected: boolean }) => {
     );
 };
 
-export const ControlledRadioButton = <T extends FieldValues>({
+export const ControlledRegularRadioButton = <T extends FieldValues>({
     control,
     name,
     value,
     label,
-    subLabel,
-    Icon,
     rules,
     disabled = false,
     className,
-}: ControlledRadioProps<T>) => {
+}: ControlledRegularRadioButtonProps<T>) => {
     return (
         <Controller
             name={name}
@@ -67,16 +63,14 @@ export const ControlledRadioButton = <T extends FieldValues>({
                         }}
                         accessibilityRole="button"
                         accessibilityState={{ disabled, selected }}
-                        className={`w-full flex-row items-center justify-between p-5 rounded-lg border border-border-form-input ${selected ? 'bg-form-input' : 'bg-white'} ${className}`}>
-                        <View className="flex-row items-center flex-1">
+                        className={`flex-row items-center justify-between p-5 rounded-lg ${className}`}>
+                        <View className="flex-row items-center ">
                             <RadioIndicator selected={selected} />
 
                             <View className="px-5">
                                 <Text className="font-semibold text-base text-text-base">{label}</Text>
-                                {subLabel ? <Text className="text-sm text-text-secondary">{subLabel}</Text> : null}
                             </View>
                         </View>
-                        {Icon}
                     </TouchableOpacity>
                 );
             }}></Controller>
