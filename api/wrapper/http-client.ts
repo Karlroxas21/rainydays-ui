@@ -28,9 +28,10 @@ export async function authenticatedFetch(endpoint: string, options: RequestInit 
         headers.set('Authorization', `Bearer ${jwt}`);
     }
 
-    // Set Content-Type for typical JSON APIs
-    if (!headers.has('Content-Type') && options.body) {
-        headers.set('Content-Type', 'application/json');
+    if (options.body && !(options.body instanceof FormData)) {
+        if (!headers.has('Content-Type')) {
+            headers.set('Content-Type', 'application/json');
+        }
     }
 
     const finalOptions: RequestInit = {
@@ -65,9 +66,11 @@ export async function kuhain<T>(endpoint: string): Promise<T> {
 }
 
 export async function paskil<K, Y>(endpoint: string, data: Y): Promise<K> {
+    const body = data instanceof FormData ? (data as any) : JSON.stringify(data);
+
     const response = await authenticatedFetch(endpoint, {
         method: 'POST',
-        body: JSON.stringify(data),
+        body,
     });
 
     const result = await response.json();
@@ -83,9 +86,11 @@ export async function paskil<K, Y>(endpoint: string, data: Y): Promise<K> {
 }
 
 export async function ilagay<K, Y>(endpoint: string, data: Y): Promise<K> {
+    const body = data instanceof FormData ? (data as any) : JSON.stringify(data);
+
     const response = await authenticatedFetch(endpoint, {
         method: 'PUT',
-        body: JSON.stringify(data),
+        body,
     });
 
     const result = await response.json();

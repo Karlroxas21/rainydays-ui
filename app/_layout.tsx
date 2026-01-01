@@ -3,7 +3,7 @@ import { Slot } from 'expo-router';
 import { ActivityIndicator, StatusBar, View } from 'react-native';
 import './globals.css';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import ModalProvider from './Provider/ModalProvider';
+import ModalProvider from './provider/ModalProvider';
 
 function RootNavigator() {
     const { isInitialLoading } = useAuth();

@@ -6,7 +6,7 @@ interface ControlledRadioProps<T extends FieldValues> {
     name: Path<T>;
     value: string | number;
     label: string;
-    subLabel: string;
+    subLabel?: string;
     Icon?: React.ReactNode;
     rules?: RegisterOptions<T>;
     disabled?: boolean;
