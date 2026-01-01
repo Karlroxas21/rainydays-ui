@@ -1,13 +1,14 @@
 import { SecureStorageDataSource } from '@/api/secure-storage-data-source';
 import { createContext, ReactNode, useState, useContext, useEffect } from 'react';
-import { login as apiLogin } from '@/api/services/auth';
+import { login as apiLogin, whoAmI } from '@/api/services/auth';
+import { useRouter } from 'expo-router';
 
 interface AuthData {
     id: string;
     jwt: string;
 }
 
-interface User {
+export interface User {
     id: string;
     firstName: string;
     middleName?: string;
@@ -22,6 +23,7 @@ interface Context {
     isInitialLoading: boolean;
     login: (identity: string, password: string) => void;
     logout: () => void;
+    whoAmI: () => Promise<User>;
     authData: AuthData | null;
     user: User | null;
 }
@@ -38,6 +40,7 @@ const AuthContext = createContext<Context>({
     isInitialLoading: true,
     login: () => Promise.resolve(),
     logout: () => {},
+    whoAmI: () => Promise.resolve({} as User),
     authData: null,
     user: null,
 });
@@ -48,6 +51,8 @@ const AuthProvider = ({ children }: Provider) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [authData, setAuthData] = useState<AuthData | null>(null);
     const [user, setUser] = useState<User | null>(null);
+
+    const router = useRouter();
 
     // check if token exists
     useEffect(() => {
@@ -64,16 +69,16 @@ const AuthProvider = ({ children }: Provider) => {
                 if (token) {
                     let rawToken: string = token;
                     try {
-                        rawToken = JSON.parse(token);
+                        const parsed = JSON.parse(token);
+                        rawToken = typeof parsed === 'string' ? parsed : token;
                     } catch {
                         // token was already a raw string
+                        rawToken = token;
                     }
+
+                    sinoAko();
                     setAuthData({ id: 'session', jwt: rawToken });
                     setIsAuthenticated(true);
-
-                    // TODO: fetch user profile
-                    // const apiCallwhoAmI
-                    // store setUser(apiCallWhoAmI)
                 } else {
                     setAuthData(null);
                     setIsAuthenticated(false);
@@ -95,9 +100,10 @@ const AuthProvider = ({ children }: Provider) => {
         setLoading(true);
         try {
             const jwt = await apiLogin({ identifier: identity, password: password });
-            if (jwt) {
-                await secureStorage.saveToken(JSON.stringify(jwt));
+            if (jwt.tokenSession) {
+                await secureStorage.saveToken(jwt.tokenSession);
                 setIsAuthenticated(true);
+                await sinoAko();
             } else {
                 throw new Error('Login failed: no token returned.');
             }
@@ -116,8 +122,24 @@ const AuthProvider = ({ children }: Provider) => {
             setAuthData(null);
             setIsAuthenticated(false);
             setUser(null);
+
+            router.push('/(unauthenticated)/login');
         } catch (error) {
             console.error(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const sinoAko = async () => {
+        setLoading(true);
+        try {
+            const data = await whoAmI();
+            setUser(data);
+        } catch (error) {
+            console.error(error);
+            // Auto-logout on unauthorized (invalid/expired token)
+            await logout();
         } finally {
             setLoading(false);
         }
@@ -131,6 +153,7 @@ const AuthProvider = ({ children }: Provider) => {
                 isInitialLoading,
                 login,
                 logout,
+                whoAmI,
                 authData,
                 user,
             }}>

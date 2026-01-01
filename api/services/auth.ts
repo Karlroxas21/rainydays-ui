@@ -1,24 +1,25 @@
 import { BASE_BE_URL } from '@/config';
-import { paskil } from '../wrapper/http-client';
+import { kuhain, paskil } from '../wrapper/http-client';
+import { User } from '@/context/AuthContext';
 
 // -- Register --
 export interface RegisterRequest {
-    emailAddress: string
-    username?: string
-    firstName: string
-    middleName?: string
-    lastName: string
-    suffix?: string
-    profileUrl?: string
-    password: string
+    emailAddress: string;
+    username?: string;
+    firstName: string;
+    middleName?: string;
+    lastName: string;
+    suffix?: string;
+    profileUrl?: string;
+    password: string;
 }
 
 interface RegisterResponse {
-    email: string
-    username: string
-    first_name: string
-    middle_name?: string
-    last_name: string
+    email: string;
+    username: string;
+    first_name: string;
+    middle_name?: string;
+    last_name: string;
 }
 
 export async function register(request: RegisterRequest): Promise<RegisterResponse> {
@@ -28,19 +29,26 @@ export async function register(request: RegisterRequest): Promise<RegisterRespon
 
 // -- Login --
 export interface Credentials {
-    identifier: string
-    password: string
+    identifier: string;
+    password: string;
 }
-export async function login(credentials: Credentials): Promise<string> {
-    const jwtSession = await paskil<string, Credentials>('/user/login', credentials);
+export async function login(credentials: Credentials): Promise<{tokenSession: string}> {
+    const jwtSession = await paskil<{tokenSession: string}, Credentials>('/user/login', credentials);
 
     return jwtSession;
 }
 
+// -- Who Am I --
+export async function whoAmI(): Promise<User> {
+    const data = await kuhain<User>('/user/whoami');
+
+    return data;
+}
+
 // -- Reset password --
 interface PasswordResetRequest {
-    identity: string
-    password: string
+    identity: string;
+    password: string;
 }
 
 export async function resetPassword(request: PasswordResetRequest): Promise<void> {
