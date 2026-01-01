@@ -22,6 +22,7 @@ import { ControlledRadioButton } from '../forms/ControlledRadioButton';
 import { ControlledRegularRadioButton } from '../forms/ControlledRegularRadioButton';
 import ControlledTextInput from '../forms/ControlledTextInput';
 import ModalHeader from './ModalHeader';
+import Toast from 'react-native-toast-message';
 
 interface FormValues {
     fundType: string;
@@ -83,12 +84,13 @@ export default function AddNewEntryModal() {
         control,
         handleSubmit,
         watch,
+        reset,
         formState: { errors, isSubmitting },
     } = useForm<FormValues>({
         mode: 'onChange',
         defaultValues: {
             fundType: 'Personal Fund',
-            transactionType: 'deposit',
+            transactionType: 'DEPOSIT',
         },
     });
 
@@ -115,6 +117,24 @@ export default function AddNewEntryModal() {
         return `${transactionType}_${timestamp}_${lastName}`;
     };
 
+    const showSuccessToast = () => {
+        Toast.show({
+            type: 'success',
+            text1: 'Success',
+            text2: "You've successfully added a new entry!",
+            position: 'bottom',
+        });
+    };
+
+    const showErrorToast = () => {
+        Toast.show({
+            type: 'error',
+            text1: 'Error',
+            text2: 'Something went wrong. Please try again later',
+            position: 'bottom',
+        });
+    };
+
     const handleAddToFund = async (data: FormValues) => {
         try {
             if (!user?.id) return;
@@ -137,9 +157,11 @@ export default function AddNewEntryModal() {
                 photo: photoToUpload as unknown as Blob,
             });
 
-            
+            reset();
+            showSuccessToast();
             setIsModalOpen(false);
         } catch (error) {
+            showErrorToast();
             console.error('Error: ', error);
         }
     };

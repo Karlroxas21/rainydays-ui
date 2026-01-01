@@ -63,7 +63,6 @@ const AuthProvider = ({ children }: Provider) => {
         (async () => {
             try {
                 const token = await secureStorage.getToken();
-                console.log('TOKEN: ', token);
 
                 if (!mounted) return;
 

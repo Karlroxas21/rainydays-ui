@@ -33,12 +33,6 @@ export default function Dashboard() {
                 <View>
                     <TouchableOpacity
                         onPress={() => {
-                            // showModal({
-                            //     component: AddNewEntryModal,
-                            //     props: {
-                            //         onClose: () => {},
-                            //     },
-                            // });
                             openModal();
                         }}>
                         <AddPlusIcon width={40} height={40} />
