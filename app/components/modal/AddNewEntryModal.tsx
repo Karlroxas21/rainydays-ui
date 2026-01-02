@@ -142,6 +142,7 @@ export default function AddNewEntryModal() {
             const group = userGroups.find(g => g.groupName === data.fundType);
             const groupIdValue = data.fundType === PERSONAL_FUND.groupName ? null : group?.id ?? '';
 
+            // Add a check to block > 5MB photos
             const photoToUpload: ReactNativeFile = {
                 uri: data.photo.uri,
                 name: getPhotoName(data.transactionType), // but in Backend, we enforce photo name.
@@ -188,7 +189,7 @@ export default function AddNewEntryModal() {
                     </View>
 
                     {/* FORM */}
-                    <ScrollView className="">
+                    <ScrollView className="pr-4">
                         {/* Add to Fund */}
                         <Text className="font-semibold mb-4">Add to Fund</Text>
                         <View accessibilityRole="radiogroup">

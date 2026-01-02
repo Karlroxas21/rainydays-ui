@@ -72,8 +72,7 @@ const AuthProvider = ({ children }: Provider) => {
                         const parsed = JSON.parse(token);
                         rawToken = typeof parsed === 'string' ? parsed : token;
                     } catch {
-                        // token was already a raw string
-                        rawToken = token;
+                        // do nothing
                     }
 
                     sinoAko();

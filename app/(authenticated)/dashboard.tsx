@@ -23,7 +23,7 @@ export default function Dashboard() {
     };
 
     return (
-        <SafeAreaView className="bg-[rgb(228,231,235)]">
+        <SafeAreaView className="">
             {/* HEADER */}
             <View className="px-5 py-4 flex flex-row items-center justify-between shadow-md">
                 <View className="">
@@ -40,6 +40,7 @@ export default function Dashboard() {
                 </View>
             </View>
 
+            <View className='bg-[rgb(228,231,235)] h-full'></View>
             {/* ---------- */}
             {/* MODAL */}
             <AddNewEntryModal />
