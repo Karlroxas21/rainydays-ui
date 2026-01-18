@@ -1,4 +1,4 @@
-import { authenticatedFetch } from '../wrapper/http-client';
+import { authenticatedFetch, kuhain } from '../wrapper/http-client';
 
 interface AddEntryRequest {
     userId: string;
@@ -7,6 +7,10 @@ interface AddEntryRequest {
     note?: string;
     photo: Blob;
     groupId: string;
+}
+
+interface TotalPersonalFundResponse {
+    totalPersonalFund: number;
 }
 
 // Will return ID of successfully created entry. Id is UUID.
@@ -28,4 +32,10 @@ export async function addEntry(request: AddEntryRequest): Promise<void> {
     if (!response.ok) {
         throw new Error('Failed to add entry');
     }
+}
+
+export async function getTotalPersonalFundCoontributedByuser(userId: string): Promise<TotalPersonalFundResponse> {
+    const data = await kuhain<TotalPersonalFundResponse>(`/user/${userId}/total-personal-fund`);
+
+    return data;
 }

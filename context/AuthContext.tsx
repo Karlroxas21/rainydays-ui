@@ -15,6 +15,7 @@ export interface User {
     lastName: string;
     suffix?: string;
     profileUrl?: string;
+    goal: number;
 }
 
 interface Context {
